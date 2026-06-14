@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ToxiGuard — Content Moderation AI</title>
+
+  <!-- Bootstrap 5 -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <!-- Bootstrap Icons -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    rel="stylesheet"
+  />
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+
+<body>
+
+<!-- ╔══════════════════════════════╗ -->
+<!-- ║          NAVBAR             ║ -->
+<!-- ╚══════════════════════════════╝ -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+      <span class="brand-icon"><i class="bi bi-shield-check"></i></span>
+      <span class="brand-name">ToxiGuard</span>
+    </a>
+    <button class="navbar-toggler border-0" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto gap-1">
+        <li class="nav-item">
+          <a class="nav-link active" href="#analyzer">Analyzer</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#how-it-works">How It Works</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#analytics">Analytics</a>
+        </li>
+        <li class="nav-item ms-2">
+          <a class="nav-link btn-nav" href="https://github.com/" target="_blank">
+            <i class="bi bi-github me-1"></i>GitHub
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- ╔══════════════════════════════╗ -->
+<!-- ║           HERO              ║ -->
+<!-- ╚══════════════════════════════╝ -->
+<header class="hero-section">
+  <div class="container text-center">
+    <div class="hero-badge mb-3">
+      <i class="bi bi-cpu me-1"></i>ML-Powered · Real-time · Production-Ready
+    </div>
+    <h1 class="hero-title">
+      Detect Toxic Content<br/>
+      <span class="highlight">Before It Spreads</span>
+    </h1>
+    <p class="hero-sub">
+      A fine-tuned text classification model trained on 159,000+ real-world comments.
+      Instant analysis with confidence scoring.
+    </p>
+    <div class="hero-stats">
+      <div class="stat-pill">
+        <span class="stat-num">95%+</span>
+        <span class="stat-label">Accuracy</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-num">159K</span>
+        <span class="stat-label">Training samples</span>
+      </div>
+      <div class="stat-pill">
+        <span class="stat-num">&lt;50ms</span>
+        <span class="stat-label">Inference time</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ╔══════════════════════════════╗ -->
+<!-- ║         ANALYZER            ║ -->
+<!-- ╚══════════════════════════════╝ -->
+<section id="analyzer" class="analyzer-section">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+
+        <div class="card analyzer-card shadow-lg">
+          <div class="card-body p-4 p-md-5">
+            <h2 class="section-title mb-1">
+              <i class="bi bi-search me-2 text-accent"></i>Comment Analyzer
+            </h2>
+            <p class="text-muted small mb-4">
+              Paste any text below and click Analyze to get an instant toxicity verdict.
+            </p>
+
+            <!-- Input area -->
+            <div class="mb-3">
+              <label for="commentInput" class="form-label fw-semibold">
+                Enter Comment
+              </label>
+              <textarea
+                id="commentInput"
+                class="form-control comment-textarea"
+                rows="5"
+                maxlength="5000"
+                placeholder="Type or paste a comment here…"
+              ></textarea>
+              <div class="d-flex justify-content-between mt-1">
+                <small class="text-muted">Max 5,000 characters</small>
+                <small class="text-muted" id="charCount">0 / 5000</small>
+              </div>
+            </div>
+
+            <!-- Sample buttons -->
+            <div class="mb-4">
+              <p class="text-muted small mb-2">Try a sample:</p>
+              <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-sample btn-sample-toxic"
+                        onclick="loadSample('toxic')">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i>Toxic sample
+                </button>
+                <button class="btn btn-sample btn-sample-clean"
+                        onclick="loadSample('clean')">
+                  <i class="bi bi-hand-thumbs-up-fill me-1"></i>Clean sample
+                </button>
+              </div>
+            </div>
+
+            <!-- Analyze button -->
+            <button id="analyzeBtn" class="btn btn-analyze w-100"
+                    onclick="analyzeComment()">
+              <span id="btnText">
+                <i class="bi bi-lightning-charge-fill me-2"></i>Analyze Comment
+              </span>
+              <span id="btnSpinner" class="d-none">
+                <span class="spinner-border spinner-border-sm me-2"></span>
+                Analyzing…
+              </span>
+            </button>
+
+            <!-- ── Result panel ── -->
+            <div id="resultPanel" class="result-panel d-none mt-4">
+
+              <!-- Verdict banner -->
+              <div id="verdictBanner" class="verdict-banner">
+                <div class="verdict-icon" id="verdictIcon"></div>
+                <div>
+                  <div class="verdict-label" id="verdictLabel"></div>
+                  <div class="verdict-sub" id="verdictSub"></div>
+                </div>
+              </div>
+
+              <!-- Confidence meter -->
+              <div class="confidence-block mt-3">
+                <div class="d-flex justify-content-between mb-1">
+                  <span class="fw-semibold small">Confidence</span>
+                  <span class="fw-bold mono" id="confidencePct">—</span>
+                </div>
+                <div class="progress confidence-bar">
+                  <div id="confidenceFill" class="progress-bar" role="progressbar">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Details -->
+              <div class="detail-row mt-3">
+                <div class="detail-item">
+                  <span class="detail-label">Verdict</span>
+                  <span class="detail-value" id="detailLabel">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Score</span>
+                  <span class="detail-value mono" id="detailScore">—</span>
+                </div>
+                <div class="detail-item">
+                  <span class="detail-label">Engine</span>
+                  <span class="detail-value">TF-IDF + ML</span>
+                </div>
+              </div>
+
+            </div><!-- /resultPanel -->
+
+            <!-- Error panel -->
+            <div id="errorPanel" class="alert alert-danger d-none mt-3" role="alert">
+              <i class="bi bi-exclamation-circle-fill me-2"></i>
+              <span id="errorMsg"></span>
+            </div>
+
+          </div>
+        </div><!-- /analyzer-card -->
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════╗ -->
+<!-- ║        HOW IT WORKS         ║ -->
+<!-- ╚══════════════════════════════╝ -->
+<section id="how-it-works" class="steps-section">
+  <div class="container">
+    <h2 class="section-title text-center mb-2">How It Works</h2>
+    <p class="text-center text-muted mb-5">A modern NLP pipeline from raw text to decision</p>
+
+    <div class="row g-4 justify-content-center">
+
+      <div class="col-md-4">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-icon"><i class="bi bi-type"></i></div>
+          <h5 class="step-title">Text Preprocessing</h5>
+          <p class="step-body">
+            Raw text is lowercased, stripped of URLs, punctuation,
+            and stop words to produce a clean token stream.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-icon"><i class="bi bi-table"></i></div>
+          <h5 class="step-title">TF-IDF Vectorisation</h5>
+          <p class="step-body">
+            Text is converted into a high-dimensional numerical vector
+            (10,000 features, unigrams + bigrams) weighting term importance.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-icon"><i class="bi bi-diagram-3"></i></div>
+          <h5 class="step-title">ML Classification</h5>
+          <p class="step-body">
+            Three models compete (Logistic Regression, Naïve Bayes, LinearSVC).
+            The best by Macro F1 is deployed for real-time inference.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════╗ -->
+<!-- ║         ANALYTICS           ║ -->
+<!-- ╚══════════════════════════════╝ -->
+<section id="analytics" class="analytics-section">
+  <div class="container">
+    <h2 class="section-title text-center mb-2">Model Analytics</h2>
+    <p class="text-center text-muted mb-5">
+      Visual insights generated after training — run <code>src/evaluate.py</code> to refresh.
+    </p>
+
+    <div class="row g-4">
+
+      <div class="col-lg-6">
+        <div class="card analytics-card h-100">
+          <div class="card-body p-4">
+            <h6 class="analytics-title">
+              <i class="bi bi-bar-chart-fill me-2 text-accent"></i>Model Comparison
+            </h6>
+            <img
+              src="/static/model_comparison.png"
+              alt="Model Comparison Chart"
+              class="img-fluid rounded analytics-img"
+              onerror="this.closest('.card').style.display='none'"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card analytics-card h-100">
+          <div class="card-body p-4">
+            <h6 class="analytics-title">
+              <i class="bi bi-grid-3x3 me-2 text-accent"></i>Confusion Matrix
+            </h6>
+            <img
+              src="/static/confusion_matrix.png"
+              alt="Confusion Matrix"
+              class="img-fluid rounded analytics-img"
+              onerror="this.closest('.card').style.display='none'"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card analytics-card h-100">
+          <div class="card-body p-4">
+            <h6 class="analytics-title">
+              <i class="bi bi-cloud-fill me-2 text-accent"></i>Toxic Word Cloud
+            </h6>
+            <img
+              src="/static/wordcloud.png"
+              alt="Word Cloud — Toxic Comments"
+              class="img-fluid rounded analytics-img"
+              onerror="this.closest('.card').style.display='none'"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card analytics-card h-100">
+          <div class="card-body p-4">
+            <h6 class="analytics-title">
+              <i class="bi bi-graph-up-arrow me-2 text-accent"></i>Feature Importance
+            </h6>
+            <img
+              src="/static/feature_importance.png"
+              alt="Feature Importance"
+              class="img-fluid rounded analytics-img"
+              onerror="this.closest('.card').style.display='none'"
+            />
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ╔══════════════════════════════╗ -->
+<!-- ║          FOOTER             ║ -->
+<!-- ╚══════════════════════════════╝ -->
+<footer class="site-footer">
+  <div class="container text-center">
+    <p class="mb-1">
+      <strong>ToxiGuard</strong> — Built with
+      <i class="bi bi-heart-fill text-danger mx-1"></i>
+      Python · scikit-learn · Flask · Bootstrap
+    </p>
+    <p class="footer-sub">
+      Dataset: Kaggle Toxic Comment Classification Challenge ·
+      Model: Best of LR / NB / LinearSVC by Macro F1
+    </p>
+  </div>
+</footer>
+
+<!-- ══ Bootstrap JS ══ -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ══ App JS ══ -->
+<script>
+  /* ── Sample texts ── */
+  const SAMPLES = {
+    toxic: "You are an absolute idiot! I hate everything you stand for and I wish you would just disappear. Your opinions are garbage.",
+    clean: "Thank you for sharing this insightful perspective. I really appreciate the effort you put into your analysis and the thoughtful way you explained the topic.",
+  };
+
+  /* ── Character counter ── */
+  const commentInput = document.getElementById("commentInput");
+  const charCount    = document.getElementById("charCount");
+  commentInput.addEventListener("input", () => {
+    charCount.textContent = `${commentInput.value.length} / 5000`;
+  });
+
+  /* ── Load sample text ── */
+  function loadSample(type) {
+    commentInput.value = SAMPLES[type];
+    charCount.textContent = `${SAMPLES[type].length} / 5000`;
+    commentInput.focus();
+  }
+
+  /* ── Main analyse function ── */
+  async function analyzeComment() {
+    const text = commentInput.value.trim();
+
+    // Hide previous results
+    hide("resultPanel");
+    hide("errorPanel");
+
+    if (!text) {
+      showError("Please enter a comment before clicking Analyze.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res  = await fetch("/predict", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ text }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        showError(data.error || "Server error. Please try again.");
+        return;
+      }
+
+      renderResult(data);
+
+    } catch (err) {
+      showError("Network error — is the Flask server running?");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  /* ── Render prediction result ── */
+  function renderResult(data) {
+    const isToxic   = data.toxic;
+    const pct       = Math.round(data.confidence * 100);
+    const banner    = document.getElementById("verdictBanner");
+    const icon      = document.getElementById("verdictIcon");
+    const label     = document.getElementById("verdictLabel");
+    const sub       = document.getElementById("verdictSub");
+    const fill      = document.getElementById("confidenceFill");
+    const confPct   = document.getElementById("confidencePct");
+    const detLabel  = document.getElementById("detailLabel");
+    const detScore  = document.getElementById("detailScore");
+
+    // Banner colour
+    banner.className = "verdict-banner " + (isToxic ? "verdict-toxic" : "verdict-clean");
+
+    // Icon
+    icon.innerHTML = isToxic
+      ? '<i class="bi bi-exclamation-triangle-fill"></i>'
+      : '<i class="bi bi-check-circle-fill"></i>';
+
+    // Labels
+    label.textContent = data.label;
+    sub.textContent   = isToxic
+      ? "This comment contains potentially harmful language."
+      : "This comment appears to be safe and respectful.";
+
+    // Confidence bar
+    fill.style.width = pct + "%";
+    fill.className   = "progress-bar " + (isToxic ? "bg-danger" : "bg-success");
+    confPct.textContent = data.pct;
+
+    // Detail row
+    detLabel.textContent = data.label;
+    detLabel.className   = "detail-value fw-bold " + (isToxic ? "text-danger" : "text-success");
+    detScore.textContent = data.confidence.toFixed(4);
+
+    show("resultPanel");
+
+    // Scroll into view
+    document.getElementById("resultPanel").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  /* ── Utilities ── */
+  function setLoading(state) {
+    document.getElementById("analyzeBtn").disabled = state;
+    document.getElementById("btnText").classList.toggle("d-none", state);
+    document.getElementById("btnSpinner").classList.toggle("d-none", !state);
+  }
+
+  function showError(msg) {
+    document.getElementById("errorMsg").textContent = msg;
+    show("errorPanel");
+  }
+
+  function show(id) { document.getElementById(id).classList.remove("d-none"); }
+  function hide(id) { document.getElementById(id).classList.add("d-none"); }
+
+  /* ── Enter-key shortcut ── */
+  commentInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) analyzeComment();
+  });
+</script>
+
+</body>
+</html>

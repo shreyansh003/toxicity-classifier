@@ -1,0 +1,55 @@
+# ── Python ──────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ── Virtual environments ─────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── Jupyter ──────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ── IDE / editor ─────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Model artefacts (too large for git) ──────────────
+model/model.pkl
+model/vectorizer.pkl
+model/results.json
+model/evaluation.json
+
+# ── Dataset (Kaggle — add manually) ──────────────────
+data/train.csv
+data/test.csv
+data/*.csv
+
+# ── Generated static assets ──────────────────────────
+static/model_comparison.png
+static/confusion_matrix.png
+static/wordcloud.png
+static/feature_importance.png
+
+# ── Logs ─────────────────────────────────────────────
+*.log
+logs/
+
+# ── Misc ─────────────────────────────────────────────
+.env
+.env.*
+*.bak
